@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express'
 import Server from '../class/server';
+import { userConnected } from '../sockets/sockets';
 
 const router = Router();
 
@@ -56,5 +57,43 @@ router.get('/messages/:id', (req:Request, res: Response) => {
 
 });
 
+
+
+
+// SERVICE ->  GET CLIENTS CONNECTED IN SOCKETS
+router.get('/users', (req: Request, res: Response) => {
+
+    const server = Server.instance;
+
+    server.io.clients( (err: any, clients: string[] ) => {
+
+        if (err) {
+            return res.json({
+                success: false,
+                err
+            });
+        }
+
+
+        res.json({
+            success: true,
+            data: clients
+        });
+
+    });
+
+});
+
+
+
+// SERVICE -> VIEW DETAIL USER CONNECTED
+router.get('/users/details', (req: Request, res: Response ) => {
+    
+    res.json({
+        success: true,
+        data: userConnected.getList()
+    });  
+
+});
 
 export default router;

@@ -30,7 +30,7 @@ export class UserList {
 
 
     public getList() {
-        return this.list;
+        return this.list.filter(user => user.name !== 'Anónimo');
     }
 
 

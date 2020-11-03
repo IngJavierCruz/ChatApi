@@ -5,7 +5,7 @@ import { UserList } from "../class/user-list";
 export const userConnected = new UserList();
 
 
-export const connectClient = (client: Socket) => {
+export const connectClient = (client: Socket, io:SocketIO.Server) => {
 
     const user = new User(client.id);
     userConnected.addUser(user);
@@ -13,10 +13,11 @@ export const connectClient = (client: Socket) => {
 };
 
 
-export const desconnected = (client: Socket) => {
+export const desconnected = (client: Socket, io:SocketIO.Server) => {
     
     client.on('disconnect', () => {
         let userDelete = userConnected.deleteUser(client.id);
+        io.emit('active-users', userConnected.getList());
         console.log(`Client desconected ${userDelete?.name} `);
     });
 
@@ -42,6 +43,7 @@ export const configUser = (client: Socket, io: SocketIO.Server) => {
     client.on('config-user',(payload: { name: string }, callback: Function) => {
 
         userConnected.updateUser({ id: client.id, name: payload.name });
+        io.emit('active-users', userConnected.getList());
 
         callback({
             data: {
@@ -54,5 +56,17 @@ export const configUser = (client: Socket, io: SocketIO.Server) => {
     }); 
 
 }
+
+
+
+export const getUsers = (client: Socket, io: SocketIO.Server) => {
+
+    client.on('get-users', () => {
+
+        io.in(client.id).emit('active-users', userConnected.getList());
+        
+    });
+
+};
 
 

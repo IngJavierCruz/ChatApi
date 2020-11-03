@@ -34,22 +34,26 @@ export default  class Server {
         this.io.on('connection', client => {
 
             console.log(client.id);
+            console.log(client.rooms);
 
             // CONNECT CLIENT
-            socketApp.connectClient(client);
+            socketApp.connectClient(client, this.io);
 
-            
+
             // CONFIG USER
             socketApp.configUser(client, this.io);
+
+
+            // GET USER ACTIVES
+            socketApp.getUsers(client, this.io);
+
 
             // LISTEN MESSAGES
             socketApp.message(client, this.io);
 
 
             // DESCONNECTED
-            socketApp.desconnected(client);
-
-
+            socketApp.desconnected(client, this.io);
 
         });
 
